@@ -624,19 +624,11 @@ function showToast(message) {
   window.setTimeout(() => toast.remove(), 4200);
 }
 
-const clockFormatter = new Intl.DateTimeFormat("ru-RU", {
-  day: "numeric",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-});
-
 function updateClock() {
   const clock = document.querySelector("#system-clock");
   const now = new Date();
   clock.dateTime = now.toISOString();
-  clock.textContent = clockFormatter.format(now);
+  clock.textContent = window.silvaI18n.formatDate(now);
 }
 
 const desktop = document.querySelector("#desktop");

@@ -2188,6 +2188,18 @@ body,
 
 .system-status { gap: 12px; }
 .status-label { color: var(--text-secondary); }
+.language-select {
+  max-width: 48px;
+  min-width: 44px;
+  height: 28px;
+  padding: 5px 3px;
+  border: 1px solid var(--line-subtle);
+  border-radius: 7px;
+  background: var(--surface-control);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
 #system-clock { color: var(--text-secondary); white-space: nowrap; }
 .theme-toggle {
   position: relative;
