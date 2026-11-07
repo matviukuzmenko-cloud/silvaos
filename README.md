@@ -14,8 +14,12 @@ custom domain to `os.silvaquieta.com`.
 
 On Windows or macOS, open `/app/` in Chrome or Edge and choose
 **Install Silva OS** in the browser menu (or use the install button in the
-Silva OS top bar). This installs the PWA as a separate, standalone app window;
-the browser and operating system provide that window's native controls. On
+Silva OS top bar) to install the PWA as a separate, standalone app window; the
+browser and operating system provide that window's native controls. The
+macOS and Windows landing-page buttons look for the newest published release
+that includes a `.dmg` or `.msi`/`.exe` and download that asset directly.
+Until a matching installer release exists, the buttons explain that the
+desktop build has not been published yet. On
 macOS Safari, use **File → Add to Dock**. On iPhone/iPad, use Safari's
 **Share → Add to Home Screen**. iOS does not provide desktop-style minimize or
 resize controls for home-screen web apps.
@@ -30,11 +34,13 @@ not open as a PWA. The GitHub Actions workflow in
 `.github/workflows/release-desktop.yml` builds macOS and Windows installers
 when a version tag is pushed.
 
-For each release, update the version in `desktop/src-tauri/tauri.conf.json` and
-`desktop/src-tauri/Cargo.toml` to the same value, commit the changes, and push a
-matching tag (for example, `v1.0.1`). After the workflow finishes, the installers
-appear in GitHub Releases. The macOS and Windows buttons on the landing page
-open the latest release.
+The current desktop version is `1.0.0`, so the first release can use the tag
+`v1.0.0`. Create and publish that release in GitHub; pushing the tag triggers
+the workflow. After it finishes, the installers appear in GitHub Releases and
+the landing-page buttons automatically download the matching platform file.
+For later releases, update the version in `desktop/src-tauri/tauri.conf.json`
+and `desktop/src-tauri/Cargo.toml` to the same value before creating the
+matching version tag.
 
 The workflow and source tree must be committed to GitHub; uploading only the
 visible static website files will not create desktop installers. iOS continues
