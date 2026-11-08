@@ -38,9 +38,9 @@ when a version tag is pushed.
 
 The next desktop version is `1.0.1`. Commit the updated source and version files
 to `main`, then either push the tag `v1.0.1` or run **Actions → Build Silva OS
-desktop apps → Run workflow**. The workflow publishes a new release with
-macOS and Windows installers; the landing-page buttons download the matching
-platform file. For later releases, update the version in
+desktop apps → Run workflow** and enter `1.0.1` as the version. The workflow
+publishes a new release with macOS and Windows installers; the landing-page
+buttons download the matching platform file. For later releases, update the version in
 `desktop/src-tauri/tauri.conf.json`, `desktop/src-tauri/Cargo.toml`, and
 `desktop/src-tauri/Cargo.lock` to the same value.
 

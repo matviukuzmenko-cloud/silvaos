@@ -77,6 +77,14 @@ const apps = {
   },
 };
 
+function getLocalizedAppUrl(appUrl) {
+  const url = new URL(appUrl);
+  if (["silvaquieta.com", "ailab.silvaquieta.com", "community.silvaquieta.com"].includes(url.hostname)) {
+    url.searchParams.set("locale", window.silvaI18n.locale);
+  }
+  return url.href;
+}
+
 class FullscreenAppManager {
   constructor(desktop, layer) {
     this.desktop = desktop;
@@ -233,6 +241,7 @@ class FullscreenAppManager {
 
       const content = element.querySelector(".window-content");
       const externalLink = element.querySelector("[data-open-app]");
+      const appUrl = app.url ? getLocalizedAppUrl(app.url) : null;
       let frame = null;
       let cleanup = null;
       if (app.kind === "monitor") {
@@ -250,9 +259,9 @@ class FullscreenAppManager {
       } else {
         frame = document.createElement("iframe");
         frame.className = "app-frame";
-        frame.src = app.url;
+        frame.src = appUrl;
         frame.title = `${app.title} — Silva OS`;
-        frame.loading = "eager";
+        frame.loading = "lazy";
         frame.referrerPolicy = "strict-origin-when-cross-origin";
         frame.allow = "clipboard-read; clipboard-write";
         frame.addEventListener("load", () => {
@@ -264,12 +273,12 @@ class FullscreenAppManager {
         });
         content.append(frame);
         element.querySelectorAll("[data-open-app]").forEach((link) => {
-          link.href = app.url;
+          link.href = appUrl;
         });
       }
 
       this.layer.append(element);
-      const state = { element, minimized: true, frame, cleanup, hideTimeout: 0 };
+      const state = { element, minimized: true, frame, appUrl, cleanup, hideTimeout: 0 };
       this.windows.set(appId, state);
       if (frame) this.startLoadingTimeout(state);
     }
@@ -388,6 +397,26 @@ class FullscreenAppManager {
 
   activeAppId() {
     return this.activeApp || null;
+  }
+
+  updateLocale(locale) {
+    this.windows.forEach((state, appId) => {
+      if (!state.frame) return;
+      const appUrl = new URL(apps[appId].url);
+      appUrl.searchParams.set("locale", locale);
+      const nextUrl = appUrl.href;
+      if (state.appUrl === nextUrl) return;
+      state.appUrl = nextUrl;
+      state.frame.src = nextUrl;
+      state.element.classList.remove("is-loaded");
+      state.element.querySelector(".app-loading").setAttribute("aria-hidden", "false");
+      state.element.querySelector(".app-loading-label").textContent = "Открываем приложение…";
+      state.element.querySelector(".app-loading-fallback").hidden = true;
+      this.startLoadingTimeout(state);
+      state.element.querySelectorAll("[data-open-app]").forEach((link) => {
+        link.href = nextUrl;
+      });
+    });
   }
 
   reload(appId) {
@@ -633,6 +662,9 @@ function updateClock() {
 
 const desktop = document.querySelector("#desktop");
 const windowManager = new FullscreenAppManager(desktop, document.querySelector("#window-layer"));
+window.addEventListener("silva-os-locale-change", (event) => {
+  windowManager.updateLocale(event.detail.locale);
+});
 
 document.addEventListener("click", (event) => {
   if (event.detail !== 0) return;
@@ -748,7 +780,7 @@ document.querySelector("#menu-popover").addEventListener("click", (event) => {
   if (action === "theme-dark") setThemePreference("dark");
   if (action === "theme-system") setThemePreference("system");
   if (action === "copy-url" && activeAppId) {
-    const url = apps[activeAppId].url;
+    const url = windowManager.windows.get(activeAppId)?.appUrl || apps[activeAppId].url;
     if (url && navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(url).then(
         () => showToast("Адрес активного сайта скопирован."),

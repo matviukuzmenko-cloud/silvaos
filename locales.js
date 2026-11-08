@@ -340,6 +340,7 @@
       console.error("Could not save the Silva OS language preference.", error);
     }
     applyLocale(locale);
+    window.dispatchEvent(new CustomEvent("silva-os-locale-change", { detail: { locale } }));
   });
 
   function updateClock() {
