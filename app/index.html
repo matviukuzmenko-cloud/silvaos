@@ -9,11 +9,13 @@
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="../icon.svg" type="image/svg+xml">
     <script src="./theme-init.js?v=1"></script>
+    <script src="../security-monitor.js" defer></script>
     <script src="../locales.js?v=1" defer></script>
-    <link rel="stylesheet" href="./style.css?v=30">
-    <script type="module" src="./app.js?v=30"></script>
+    <link rel="stylesheet" href="./style.css?v=31">
+    <script type="module" src="./app.js?v=32"></script>
   </head>
   <body>
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
     <div class="os-shell" id="os-shell">
       <header class="menubar">
         <div class="menu-brand" aria-label="Silva OS">
@@ -51,11 +53,6 @@
       </header>
 
       <main class="workspace" id="desktop" aria-label="Рабочий стол Silva OS">
-        <div class="gemini-glow" aria-hidden="true">
-          <span class="glow-orb glow-orb-blue"></span>
-          <span class="glow-orb glow-orb-violet"></span>
-          <span class="glow-orb glow-orb-pink"></span>
-        </div>
         <section class="launchpad" aria-labelledby="launchpad-title">
           <div class="launchpad-heading">
             <p class="eyebrow">SILVA OS <span aria-hidden="true">/</span> WEB APPS</p>
